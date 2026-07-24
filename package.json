@@ -1,0 +1,27 @@
+{
+  "name": "marketing-videos",
+  "version": "1.0.0",
+  "description": "Make marketing videos with a coding agent: Remotion compositions, AI footage pipeline, and the skills that teach an agent the whole method.",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "dev": "remotion studio",
+    "render": "remotion render Example out/example.mp4",
+    "render:vertical": "remotion render ExampleVertical out/example-vertical.mp4",
+    "render:best": "remotion render Example out/example-best.mp4 --scale=2 --crf=14 --image-format=png --color-space=bt709 --x264-preset=veryslow --pixel-format=yuv420p --concurrency=50%",
+    "still": "remotion still Example out/frame.png",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.454",
+    "@remotion/google-fonts": "4.0.454",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "remotion": "4.0.454"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "typescript": "^5.4.0"
+  }
+}
