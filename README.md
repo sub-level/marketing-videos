@@ -24,7 +24,9 @@ footage from Higgsfield. Every frame is code; nothing was touched in a video edi
 
 ### Agentic Payments launch film — "Match Day"
 
-[![Agentic Payments launch film](https://img.youtube.com/vi/z3gzPP1F_2g/maxresdefault.jpg)](https://youtu.be/z3gzPP1F_2g)
+[![Agentic Payments launch film](https://img.youtube.com/vi/z3gzPP1F_2g/maxresdefault.jpg)](https://www.youtube.com/watch?v=z3gzPP1F_2g)
+
+**▶ Watch: [youtube.com/watch?v=z3gzPP1F_2g](https://www.youtube.com/watch?v=z3gzPP1F_2g)**
 
 A ~40 second story-driven launch film: two friends live one day that ends at a World Cup
 semi-final while their agent quietly buys the tickets, arms standing orders, and restocks the
@@ -34,7 +36,9 @@ image-to-video), cut against real product UI rebuilt in code.
 
 ### Launch film — "We're Building the Annotated Internet."
 
-[![Launch film](https://img.youtube.com/vi/tUO-Oa_W4Zc/maxresdefault.jpg)](https://youtu.be/tUO-Oa_W4Zc)
+[![Launch film](https://img.youtube.com/vi/tUO-Oa_W4Zc/maxresdefault.jpg)](https://www.youtube.com/watch?v=tUO-Oa_W4Zc)
+
+**▶ Watch: [youtube.com/watch?v=tUO-Oa_W4Zc](https://www.youtube.com/watch?v=tUO-Oa_W4Zc)**
 
 A ~80 second launch film: a typographic timelapse through internet history into a live product
 demo, with the real app's UI components running inside the Remotion render via a runtime shim.
