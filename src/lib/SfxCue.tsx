@@ -1,5 +1,5 @@
 import React from "react";
-import { Audio, Sequence } from "remotion";
+import { Html5Audio, Sequence } from "remotion";
 
 // Plays a one-shot sound effect at a specific scene-local frame. Wrapped in a
 // `<Sequence from={at}>` so the audio's internal frame is 0 at trigger time.
@@ -10,7 +10,7 @@ import { Audio, Sequence } from "remotion";
 //   <SfxCue src={staticFile("sfx/ding.wav")}   at={235} volume={0.4} pitch={1.1} />
 //
 // `pitch` is `playbackRate` doubling as a pitch shift (1.3 = higher,
-// 0.85 = lower) — vary the SAME sample so repeated pops feel distinct without
+// 0.85 = lower). Vary the SAME sample so repeated pops feel distinct without
 // authoring separate files.
 
 type Props = {
@@ -35,7 +35,7 @@ export const SfxCue: React.FC<Props> = ({
 }) => {
   return (
     <Sequence from={at} durationInFrames={durationInFrames} layout="none">
-      <Audio src={src} volume={volume} playbackRate={pitch} />
+      <Html5Audio src={src} volume={volume} playbackRate={pitch} />
     </Sequence>
   );
 };

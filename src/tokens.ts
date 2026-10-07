@@ -25,7 +25,7 @@ export const COLORS = {
   textDim: "rgba(240,238,232,0.62)",
   textMuted: "rgba(240,238,232,0.40)",
 
-  // Accent — placeholder blue. Swap for your brand color.
+  // Accent: placeholder blue. Swap for your brand color.
   accent: "#5B8CFF",
   accentGlow: "rgba(91,140,255,0.55)",
   accentSoft: "rgba(91,140,255,0.16)",
@@ -66,7 +66,7 @@ export const SCENE = {
 export const TOTAL_FRAMES =
   SCENE.hook + SCENE.method + SCENE.numbers + SCENE.close;
 
-// Absolute composition frame each scene starts at — for the persistent
+// Absolute composition frame each scene starts at, for the persistent
 // backdrop + chrome, which sit OUTSIDE the <Series> and read absolute frames.
 // (Inside a scene, useCurrentFrame() is scene-relative.)
 export const SCENE_START = {

@@ -31,7 +31,58 @@ failure, then the fix.
   side-effectful state). In Remotion this is free - everything derives from
   `useCurrentFrame()` - so keep it that way; do not introduce `useState`/`useEffect`
   animation state.
-- **Load fonts once at the Root**, never inside scene components.
+- **Load fonts once at the Root**, never inside scene components, and pass `weights` and
+  `subsets` to `loadFont()`. The default loads every weight and every subset, which is
+  60-130 network requests per family on every render and a hard failure offline.
+- **Remotion upgrades are family upgrades.** Every `@remotion/*` package must sit on the
+  exact same version as `remotion` itself, and a minor bump can force a peer with it
+  (Zod moved 3.x to 4.x for the version checker). Bump them in one commit and run
+  `npx remotion versions`; it refuses a mixed family, and a mixed family fails at render
+  time with errors that point nowhere near the cause. After any upgrade, re-render a
+  short frame range from each composition at half resolution and LOOK at a frame.
+- **Never crop a logo with an overflow box.** To use part of a wordmark (the letters
+  without the mark, say), export that path alone and fit the SVG's viewBox to its own ink
+  with a one-unit margin. An `overflow: hidden` crop of the full asset shaves the first
+  glyph AND keeps the dead width in the layout box, so the lockup also sits off centre.
+  Verify by pixel-measuring the rendered still: the lockup's centre should land within a
+  pixel of the frame's axis.
+- **Fresh geometry per card reads as slides.** Fading a word in at final size inside its
+  own new circle, then cutting to the next, is a slideshow with easing no matter how good
+  the curves are. Keep ONE piece of geometry alive and transform it across the sequence:
+  born oversized, collapsing, hardening, spawning, leaving. See `src/lib/GeometryWords.tsx`.
+- **Type size is a measurement, not a feel.** Films read smaller on a phone than in the
+  studio preview. Measure the reference's CAP HEIGHT as a ratio of frame height (a 62px
+  cap on a 1080-high frame is an 84-88px font) and measure your own render the same way.
+  Portrait gets its own sizes, never the landscape number scaled.
+- **A particle field on a linear drift with a twinkle is a star field**, and it looks
+  cheap. Dust is alive because each mote has its OWN path, depth and breathing period.
+  Verify by compositing three frames a second apart into R/G/B: parallel trails mean you
+  built stars.
+- **Editions multiply the surfaces you forget to check.** A white mark on a light ground
+  and a corner layout in portrait are both invisible until someone opens that one
+  edition. Render a still per edition at every scene you touched.
+
+## 3D device stages (WebGL)
+
+- **A render or still without `--gl=angle` is blank**, and nothing in the output says so.
+- **The camera must be set in a `useLayoutEffect`.** ThreeCanvas advances the scene from
+  a passive effect, so a passive camera update lands a frame late.
+- **`invalidate()` is not enough while rendering.** It only schedules; at concurrency > 1
+  it hands you a stale frame. Call `advance(performance.now())` when rendering, from the
+  video-frame callback and when the model loads.
+- **Hold a `delayRender()` until the model loads**, and release it on failure too.
+- **Unmemoized `onLoaded`/`onFailure` reload the GLB every frame.** They are effect deps.
+- **A still screen draws black if you advance on load.** The model reports loaded before
+  React commits the texture binding; video frames self-heal on the next frame, a still
+  never does. Flip state on load and advance from the parent's effect.
+- **`useVideoTexture` / `useOffthreadVideoTexture` are deprecated.** Draw decoded frames
+  into an OffscreenCanvas and mark a `CanvasTexture` dirty instead.
+- **A clip window that starts just before a hard cut inside the source recording** flashes
+  the outgoing shot for a few frames and reads as a lag hiccup, not an edit. Trim to one
+  frame after the cut, and re-measure when the source is re-cut.
+- **1x renders stair-step every rotated edge, CSS clip and WebGL bezel.** Deliver at
+  `--scale=2` downscaled with Lanczos. Icon PNGs with a hard one-bit alpha edge also need
+  clipping with a CSS squircle rather than trusting the asset's own edge.
 
 ## AI footage
 
@@ -51,6 +102,16 @@ failure, then the fix.
   resolution/fps once per film so any regenerated clip is drop-in.
 - **Don't re-shoot what you can edit.** "Keep EVERYTHING identical, ONLY change X" on the
   existing approved still, then re-run i2v with identical specs.
+- **Never generate a real person's likeness without verifiable consent.** "They are on a
+  retainer" is not verification and a profile screenshot is not a release. Build a
+  fictional presenter styled after the look instead; in practice that is accepted.
+- **Identity drifts even with the same reference.** A presenter take came back as a
+  visibly different person from the same approved frame. Contact-sheet EVERY take before
+  cutting, and spell the identity out feature by feature in the retake prompt.
+- **Submit video jobs one at a time.** Two simultaneous submissions can race on the credit
+  check and the second fails "out of credits" while the balance covered both.
+- **Some endpoints only accept the `image` media role** for a reference frame and reject
+  `avatar` / `reference` outright.
 
 ## Audio
 
@@ -62,9 +123,30 @@ failure, then the fix.
   a growing cut can never hard-stop the track mid-note.
 - **Mirror SFX locally.** A headless render that fetches audio from the network is a
   flaky render.
+- **`Audio` is now `Html5Audio`, and `startFrom` / `endAt` are now `trimBefore` /
+  `trimAfter`.** The old names still work and are marked deprecated in the types. A repo
+  that warns about `useVideoTexture` should not be shipping them.
+- **A sound on everything makes a film feel like a tutorial.** A click per typed letter, a
+  tap sound on a visible tap, a ding on every reveal: all three got cut from a film and it
+  improved. Silence is a layer.
+- **A sample does not peak at its start.** Profile the attack in 100ms slices; a whoosh
+  that peaks at 0.5s fired on a cut blooms 15 frames into the next shot. Trim the head so
+  the peak lands ~6 frames after firing.
+- **An audio revision does not need a re-render.** Render the composition to WAV and remux
+  onto the approved master with `-c:v copy`. Seconds, and the video stream stays
+  bit-identical.
+- **A licensed track from a subscription library is licensed to YOU while you subscribe.**
+  It does not transfer with the film to a client. Settle that before scoring, not after
+  picture lock.
 
 ## Process
 
+- **"Like this video" means measure it, not watch it.** Building your impression of a
+  reference produces type that is too small and holds that are too long, every time.
+  Extract the frames and read the numbers.
+- **A cut that runs twice its reference's length has a hold problem, not a content
+  problem.** Shorten the holds and give each clip only its strongest few seconds before
+  you start cutting beats.
 - **Reading time is sacred.** If a viewer cannot finish a line, add time - do not cut
   copy. Budget roughly reading time plus a beat per message.
 - **Show, don't describe.** Approval happens on rendered stills and mp4s, not on prose

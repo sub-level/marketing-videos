@@ -4,12 +4,19 @@
   "description": "Make marketing videos with a coding agent: Remotion compositions, AI footage pipeline, and the skills that teach an agent the whole method.",
   "private": true,
   "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "dev": "remotion studio",
     "render": "remotion render Example out/example.mp4",
     "render:vertical": "remotion render ExampleVertical out/example-vertical.mp4",
+    "render:grammar": "remotion render Grammar out/grammar.mp4",
+    "render:grammar:vertical": "remotion render GrammarVertical out/grammar-vertical.mp4",
     "render:best": "remotion render Example out/example-best.mp4 --scale=2 --crf=14 --image-format=png --color-space=bt709 --x264-preset=veryslow --pixel-format=yuv420p --concurrency=50%",
+    "render:masters": "bash scripts/render-supersampled.sh",
     "still": "remotion still Example out/frame.png",
+    "still:grammar": "remotion still Grammar out/grammar-frame.png --frame=119",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

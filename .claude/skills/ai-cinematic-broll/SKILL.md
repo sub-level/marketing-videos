@@ -1,6 +1,6 @@
 ---
 name: ai-cinematic-broll
-description: Generate cinematic AI footage for marketing videos using image + image-to-video models (Higgsfield MCP or equivalent). Use when a film needs filmed-looking shots - characters, places, product worlds - rather than pure motion graphics. Covers the look bible, character references, the stills-first approval gate, identity-preserving image-to-video, editing recipes, and cost discipline.
+description: Generate cinematic AI footage for marketing videos using image + image-to-video models (Higgsfield MCP or equivalent). Use when a film needs filmed-looking shots - characters, places, product worlds - or an AI presenter for a UGC-style ad, rather than pure motion graphics. Covers the look bible, character references, the stills-first approval gate, identity-preserving image-to-video, presenter ads and their consent rules, editing recipes, and cost discipline.
 ---
 
 # Cinematic AI B-Roll
@@ -102,15 +102,67 @@ composite into a 1080p master; re-generate at 1080p only if a 4K master matters.
   (`ffmpeg -vf "crop=...,scale=..."`) for card thumbnails and posters instead of generating
   new images.
 
+## Presenter ads (the UGC cut)
+
+A different animal from the launch film: 13-15 seconds, 9:16, a person talking straight
+to camera about the product, with real app footage cut in. Same discipline, three extra
+rules.
+
+**Consent first, and it is not negotiable.** Never build a presenter on a real person's
+likeness - a creator, a customer, a public figure - without verifiable consent for that
+specific use. "They are on a retainer" is not verification, and a screenshot of someone's
+profile is not a release. Build a FICTIONAL presenter from text prompts styled after the
+look that was asked for; in practice the answer to "it doesn't need to be identical" is
+yes, it does not. Also never present a generated person as a real customer giving a
+testimonial - if a disclosure is required where the ad runs, that is a product decision,
+so raise it.
+
+**One approved frame drives every take.** Generate presenter frames one at a time, at
+~1 credit each, until the human approves ONE. That frame's job id is then the image
+reference for every video take in the campaign, so all three ads share a presenter. Final
+tweaks (hair, wardrobe, makeup) are an image EDIT on the approved frame, not a re-roll.
+
+**Then video, one job at a time.** Direct-to-camera clips are the expensive step
+(~150 credits at 1080p, ~75 at 720p, several minutes each).
+
+- Pass the frame as an `image` reference. Some providers reject `avatar` or `reference`
+  roles on this endpoint and accept only `image`.
+- Describe the VOICE in the prompt ("soft, warm, low, slightly breathy") - it is part of
+  the take, and re-rolling for voice costs the same as re-rolling for picture.
+- **Submit one job at a time.** Two simultaneous submissions can race on the credit
+  check and the second fails "out of credits" while the balance covered both.
+- **Contact-sheet every take before cutting.** Identity drifts: one take came back as a
+  visibly different woman despite the same frame reference. The retake prompt that held
+  spelled the identity out feature by feature ("large light BLUE eyes, full lips with a
+  NUDE PINK gloss, only a few faint freckles, holds only an orange phone").
+- 720p upscaled with Lanczos to 1080x1920 is fine on a phone feed and half the price.
+  Shoot the hero concept native; upscale the variants. Note which is which, so a softness
+  complaint has an answer.
+
+**The ad's proof is the product, not the person.** Keep real recorded app footage on the
+phone in her hand, and give it real screen time. Set the presenter somewhere that signals
+the category (a desk with the actual collectibles, not a scenic selfie) or viewers ask
+"what is this app" in the comments.
+
+**Captions come from word timings, not from guessing.** Transcribe the take
+(faster-whisper or equivalent), then place overlays on word boundaries. Note that a
+Homebrew ffmpeg often has NO libass, so `subtitles`/`ass` filters fail locally - burn the
+captions in a provider sandbox or install an ffmpeg built with libass.
+
+Keep the whole cut in a script (`assemble.py`) with the filter graph and the word-timing
+windows in it. The second and third ad are then a data edit, not a re-edit.
+
 ## Prompt hygiene (each of these burned us once)
 
 - **"plain, no logos or crests"** on any clothing/product - image models paint REAL brand
   marks (sportswear logos, team crests) unless told not to, and AI-rendered lettering is
   gibberish anyway. If you need lettering, verify the model can do it in that shot type.
 - **"generic person, not resembling any real person"** - a bare "soccer fan portrait"
-  produced a recognizable celebrity likeness. Always include it.
+  produced a recognizable celebrity likeness. Always include it. And if you are ASKED for
+  a specific real person's likeness, decline and offer the fictional version - see the
+  presenter section above.
 - **Never use a third party's trademarked name/domain in-shot.** Invent a truthful stand-in
-  (we typed `match102.com` for match 102 instead of a governing body's real site).
+  (we typed `match104.com` for match 104 instead of a governing body's real site).
 - **Moderation false positives happen** - an innocent prompt can get flagged; reword the
   physical action ("having their morning coffee, lifting the mugs") and retry.
 - Music, fonts, logos: only license-cleared assets ever ship in a public cut.
@@ -124,6 +176,12 @@ footage lands in the low hundreds of credits WHEN the approval gate is respected
 multiples of that when it is not.
 
 ## MCP mechanics (Higgsfield)
+
+Connect the provider before you start: Higgsfield installs as a connector from
+higgsfield.ai, and `.mcp.json.example` in this repo shows the shape of an HTTP MCP entry
+(with the token read from the environment, never written into the file). Any provider
+with image references plus an image-to-video start-image contract substitutes cleanly;
+nothing below depends on one vendor.
 
 - Unsure which model fits: `models_explore(action:'recommend')` with the goal + input.
 - Reference images and seed stills go up via the media upload flow (presigned PUT +

@@ -3,3 +3,18 @@ out/
 .DS_Store
 *.log
 .remotion/
+
+# Licensed audio never goes in a public repo: a subscription track is licensed
+# to YOU, not to whoever forks this. The READMEs that explain the layout stay.
+public/audio/*
+public/sfx/*
+!public/audio/README.md
+!public/sfx/README.md
+
+# Bring-your-own 3D model for the device stage.
+public/device/
+
+# Secrets. The MCP servers read their tokens from the environment.
+.env
+.env.*
+!.env.example

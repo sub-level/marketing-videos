@@ -4,9 +4,9 @@
 9:16 vertical + App Store cuts, all from one scene tree.
 
 The launch film for an agentic-payments feature in a consumer browser. Concept: *it shops
-while you live* - two friends live one day that ends at a World Cup semi-final while their
-in-browser agent quietly buys the tickets, arms conditional "standing orders", and restocks
-the pantry. Made entirely by Claude Code: the filmed world generated through the Higgsfield
+while you live* - two friends live one day that ends at a World Cup final while their
+in-browser agent quietly buys the tickets, arms conditional "buy X when Y" rules, and
+restocks the pantry. Made entirely by Claude Code: the filmed world generated through the Higgsfield
 MCP, the product UI rebuilt in Remotion, sound designed in code.
 
 ## What the film had to do
@@ -20,27 +20,25 @@ watchable with sound off.
 ### The failure that shaped everything
 
 The first attempt was a montage of unrelated AI clips - sparkling water, a concert, a dog,
-a coffee. Verdict from the founder: among the worst visuals they had ever seen. The lesson
-became the iron rule in the `ai-cinematic-broll` skill: disconnected postcards read as
-stock. Cohesion comes from ONE story, ONE cast, ONE place, ONE grade. Everything below
+a coffee. It was rejected outright. The lesson became the iron rule in the
+`ai-cinematic-broll` skill: disconnected postcards read as stock. Cohesion comes from ONE story, ONE cast, ONE place, ONE grade. Everything below
 exists to enforce that.
 
 ### Story and truthfulness
 
-- Two friends, one day, ending at a real fixture: the 2026 World Cup semi-final in
-  Atlanta. The browser types `match102.com` - the game really was match 102 of the
-  tournament, which let the shot be TRUE without using the governing body's trademarked
-  domain.
-- Kits are rendered as COLORS only (a plain white kit, a sky-blue striped kit) - never
+- Two friends, one day, ending at a real fixture: the 2026 World Cup final. The browser
+  types `match104.com` - the game really was match 104 of the tournament, which let the
+  shot be TRUE without using the governing body's trademarked domain.
+- Kits are rendered as COLORS only (a sky-blue striped kit, a solid red kit) - never
   official crests or sponsor logos. Image models paint real brand marks unless told
   "plain, no logos or crests", and trademark aside, AI lettering renders as gibberish.
-- Copy checked against reality: "Atlanta. 3PM." - never "tonight" for a 3PM kickoff.
+- Copy checked against reality: "New York. 3PM." - never "tonight" for a 3PM kickoff.
 
 ### The claymation world
 
 The whole filmed world is stop-motion claymation. It began as three character interludes
-(the mascot doing the agent's work), and the founder liked them enough that every filmed
-shot went clay. Why it works: the style hides AI artifacts, gives automatic visual
+(the mascot doing the agent's work), and they worked well enough that every filmed shot
+went clay. Why it works: the style hides AI artifacts, gives automatic visual
 cohesion, and has charm photoreal AI lacks. Prompts carry the medium's tells: "visible
 fingerprints in the clay, stop-motion film still", i2v prompts add "subtle handmade
 jitter, camera locked off".
@@ -51,7 +49,7 @@ Every shot went through the same pipeline:
 
 1. A character-reference still locked the cast, wardrobe, and warm golden-hour grade.
 2. Each story beat was generated as a still (~2 credits) with the reference attached.
-3. **The founder approved the still set before a single clip was generated.**
+3. **A human approved the still set before a single clip was generated.**
 4. Approved stills were animated with Seedance image-to-video (`start_image` = the still,
    5s, 720p, 24fps - pinned so every clip is drop-in replaceable).
 
@@ -85,8 +83,8 @@ Two moves worth stealing:
 ### Pacing, sound, and review
 
 - A friend literally could not finish reading the conversation. The fix was time, not
-  cuts: every message got roughly its reading time plus a beat. The founder's rule:
-  "just give more time".
+  cuts: every message got roughly its reading time plus a beat. The rule that came out of
+  it: when someone cannot finish a line, give more time.
 - Purchases share one voice: the hero buy gets a bright ding; each armed order echoes a
   quieter, pitched version of the same sample.
 - Three candidate music tracks were rejected by ffmpeg profiling before cutting: audible

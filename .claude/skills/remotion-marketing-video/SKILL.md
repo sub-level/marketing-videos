@@ -1,6 +1,6 @@
 ---
 name: remotion-marketing-video
-description: Build marketing and launch videos as Remotion compositions. Use when creating or editing any video in this repo - scene structure, timing math, kinetic captions, springs and interpolation, dual 16:9/9:16 output, verification, and rendering. This is the core skill; pair with ai-cinematic-broll for AI footage and video-audio-stack for sound.
+description: Build marketing and launch videos as Remotion compositions. Use when creating or editing any video in this repo - scene structure, timing math, kinetic captions and typed lines, springs and interpolation, dual 16:9/9:16 output, light/dark editions, verification, and rendering. This is the core skill; pair with motion-from-reference when matching a reference film's grammar, device-3d-stage for a real device on screen, ai-cinematic-broll for AI footage, and video-audio-stack for sound.
 ---
 
 # Remotion Marketing Video
@@ -21,6 +21,11 @@ can verify a frame the way you verify a unit test.
 - **Readable pacing beats tight pacing.** Give each line roughly its reading time plus a
   beat (~1-2 seconds of lead per chat message or caption). When a viewer says they could not
   finish reading, add time - do not cut copy.
+- **Motion design, not slides.** The difference is whether elements are BORN OUT OF the
+  elements they replace. A scene that mounts fresh shapes at their final size and fades
+  between them is a slideshow with easing. Keep one piece of geometry alive across a
+  sequence and transform it - see `lib/GeometryWords.tsx` and the
+  `motion-from-reference` skill.
 - **Build decisively.** Pick a strong default, state assumptions, build it, then offer
   specific adjustment levers (swap music, retime a beat, flip a media slot). Do not
   front-load configuration questions.
@@ -37,11 +42,28 @@ src/<video>/
   <Video>Vertical.tsx  # 3-line portrait wrapper (see Dual aspect)
   scenes/          # one file per scene
   components/      # scene-local components
-  audio/           # MusicBed + SfxCue wiring (see video-audio-stack skill)
+  audio/           # OPTIONAL: this film's cue sheet, if it has enough cues to
+                   # deserve its own file (see the video-audio-stack skill)
 ```
 
-Register both editions in `Root.tsx`. Static assets go in `public/<video>/` and are loaded
-with `staticFile()` - never plain string paths.
+Register every edition in `Root.tsx`, and have each film's compositions read THEIR OWN
+`FPS` from their own `tokens.ts` - importing another film's constant is how a retime
+silently fails to apply.
+
+Assets load with `staticFile()`, never a plain string path:
+
+```
+public/<video>/   # anything specific to this film (clips, logos, stills)
+public/audio/     # music beds, shared
+public/sfx/       # the one-shot library, shared
+```
+
+Keep licensed audio out of git (`.gitignore` already covers `public/audio/*` and
+`public/sfx/*` while keeping their READMEs).
+
+Two films ship in this repo as working examples of the pattern: `src/example/` (kinetic
+captions, cards, counters, chrome) and `src/grammar/` (typed lines, continuous geometry,
+dust, three themes).
 
 ## Timing model (get this right or audio desyncs)
 
@@ -79,6 +101,29 @@ with `staticFile()` - never plain string paths.
   actual components inside the composition behind a runtime shim: fake the host APIs
   (e.g. a `globalThis.chrome` stub with canned message responses), seed the state store
   deterministically per frame, and the demo can never drift from the shipped product.
+
+### Shared primitives in `src/lib/`
+
+Reach for these before writing a new one; each exists because its naive version looks
+wrong in a specific, measurable way.
+
+| Primitive | What it is for |
+| --- | --- |
+| `KineticCaption` | Word-by-word narration: rise + blur + fade, emphasis in the accent color |
+| `TypedLine` | A line that types on one letter a frame and SWEEPS off (not a fade). Measured mechanics - see the `motion-from-reference` skill |
+| `LetterLine` + `letterSweep` | Per-letter opacity from a function of index: sweeps, mirrored crossfades, brightness waves |
+| `GeometryWords` | A value-word sequence carried by ONE continuous piece of geometry |
+| `DustField` | Living dust motes for a dark ground (each mote has its own path, not a shared one with a phase offset) |
+| `MusicBed` / `SfxCue` | The audio layers - see the `video-audio-stack` skill |
+
+Type sizing is a measurement, not a feel: a cap height of 62px on a 1080-high frame is an
+84-88px font. Portrait gets its OWN sizes (66px lines, 64px words at 1080 wide), never the
+landscape number scaled.
+
+**Backgrounds are a system too.** A dark frame wants texture, but points on a linear drift
+with a twinkle read as a star field and look cheap. `DustField` gives every mote its own
+depth, its own two-sine path and its own breathing period. Verify by compositing three
+frames a second apart into R/G/B: parallel trails mean you built a star field.
 
 ### remotion-bits
 
@@ -148,6 +193,17 @@ with PIL - they must land within 1px.
 - **Editions** (partner cut, locale, campaign): a React context provides an
   `EditionContent` object (messages, stats, chart points, source logos); scenes read the
   context. Layout and choreography stay identical; only content swaps.
+- **Themes** (dark / light / mixed): `ThemeContext` in `src/theme-context.ts`, exactly
+  like the vertical flag and in its own file for the same cycle reason. `mixed` gives
+  each scene its own value from one table (`sceneThemes`), which is how a film alternates
+  grounds the way an App Store screenshot set does. Crossed with the aspect ratios that
+  is SIX deliverables from one scene tree - `src/grammar/` demonstrates it.
+  - One component owns the ground; no scene paints its own background, so no scene can
+    disagree with the edition.
+  - Dust belongs to dark grounds only. On white it reads as dirt.
+  - Marks and logos that are drawn white need inverting for the light edition
+    (`filter: brightness(0)` on a white SVG), and that is easy to forget on the one
+    scene you did not check.
 - **Parameterized comps**: Zod-typed props on the composition (`schoolName`, `accentColor`)
   for per-audience renders from the CLI.
 
@@ -165,3 +221,20 @@ npx remotion render <CompId> out/<name>-best.mp4 \
 `--scale=2` on a 1920x1080 comp gives a 4K master. Use `--crf=17 --jpeg-quality=100
 --x264-preset=slow` for a faster near-best pass. Render portrait and landscape as separate
 compositions, not crops.
+
+### Deliverables are supersampled, not rendered at 1x
+
+At 1x the browser stair-steps rotated elements, CSS clips, thin strokes and any WebGL
+edge, and the result reads as cheap even to people who cannot say why. Render every
+delivery at `--scale=2` and downscale with a Lanczos filter:
+
+```bash
+scripts/render-supersampled.sh Grammar 1920:1080
+```
+
+That script renders at 2x, downscales with ffmpeg, tags BT.709, writes a faststart MP4 and
+deletes the 2x intermediate. Add each edition to its case list and the whole set is one
+command. Drafts can stay at 1x; anything a human reviews for polish should not.
+
+Pass `--gl=angle` as well whenever the composition contains a WebGL canvas, or it renders
+blank with no error.

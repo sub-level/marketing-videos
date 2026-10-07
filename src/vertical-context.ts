@@ -6,7 +6,7 @@ import React from "react";
  * portrait edition renders natively (never scale-and-crop).
  *
  * Lives in its OWN file on purpose: scenes import it, and the vertical
- * wrapper imports the composition that pulls those scenes in — defining the
+ * wrapper imports the composition that pulls those scenes in. Defining the
  * context inside the wrapper would create a
  * `scenes -> Wrapper -> Video -> scenes` cycle that leaves the context
  * undefined at module evaluation and renders the studio as a white screen.

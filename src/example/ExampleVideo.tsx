@@ -8,7 +8,7 @@ import { MethodScene } from "./scenes/MethodScene";
 import { NumbersScene } from "./scenes/NumbersScene";
 import { CloseScene } from "./scenes/CloseScene";
 
-// The example film — a 27 second demonstration of the grammar this repo
+// The example film: a 27 second demonstration of the grammar this repo
 // teaches:
 //
 //   HOOK    120f / 4s   "This film was not edited." / "It was compiled."
@@ -23,7 +23,7 @@ import { CloseScene } from "./scenes/CloseScene";
 //
 // Audio is intentionally not mounted (no assets ship with the repo). To score
 // it, drop files into public/audio + public/sfx and mount <MusicBed> here and
-// <SfxCue> inside scenes — see the video-audio-stack skill.
+// <SfxCue> inside scenes. See the video-audio-stack skill.
 
 export const ExampleVideo: React.FC = () => (
   <AbsoluteFill style={{ background: COLORS.bg, fontFamily: FONT.sans }}>

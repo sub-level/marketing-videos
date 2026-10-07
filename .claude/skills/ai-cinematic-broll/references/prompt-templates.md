@@ -17,8 +17,8 @@ generic people, not resembling any real person
 ## 1. Character reference still
 
 ```
-{shot: e.g. "rooftop two-shot, waist up"} of {cast: e.g. "a woman in a plain white
-football kit with navy shorts, and a man in a sky-blue and white striped kit"},
+{shot: e.g. "rooftop two-shot, waist up"} of {cast: e.g. "a man in a sky-blue and white
+striped football kit, and a woman in a solid red kit"},
 {mood/action}, looking away from camera / three-quarter view,
 16:9, highly detailed
 + look-bible block

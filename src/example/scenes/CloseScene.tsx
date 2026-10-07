@@ -11,7 +11,7 @@ import { COLORS, FONT, RADIUS, SCENE } from "../../tokens";
 import { CLOSE } from "../script";
 
 // Sign-off: headline spring, URL pill, then a clean fade to black. The film
-// always ends on a held, quiet frame — never mid-motion.
+// always ends on a held, quiet frame, never mid-motion.
 
 export const CloseScene: React.FC = () => {
   const frame = useCurrentFrame();

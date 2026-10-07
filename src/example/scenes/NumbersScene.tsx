@@ -12,10 +12,14 @@ import { KineticCaption } from "../../lib/KineticCaption";
 import { NUMBERS_CUES, STATS } from "../script";
 
 // The money shot: stat tiles whose numbers count up. Numbers animate as
-// NUMBERS (interpolate the value, format at render) — never animate a
+// NUMBERS (interpolate the value, format at render). Never animate a
 // formatted string.
 
-const TILE_AT = [8, 26, 44];
+// Derived, not retyped: a fourth stat added to STATS gets a tile time for
+// free. A literal [8, 26, 44] would hand the fourth tile `undefined`, and
+// spring({ frame: frame - undefined }) is NaN, which renders as nothing.
+const TILE_STAGGER = 18;
+const tileAt = (i: number) => 8 + i * TILE_STAGGER;
 const COUNT_LEN = 40;
 
 const StatTile: React.FC<{
@@ -105,7 +109,7 @@ export const NumbersScene: React.FC = () => {
             value={st.value}
             suffix={st.suffix}
             label={st.label}
-            at={TILE_AT[i]}
+            at={tileAt(i)}
             vertical={vertical}
           />
         ))}

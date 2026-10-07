@@ -14,7 +14,10 @@ import { METHOD_CUES, MOVES } from "../script";
 // picture and words stay in lockstep. Landscape: a row. Portrait: a column
 // (the dual-aspect rule: hardcoded row widths would overflow 1080).
 
-const CARD_AT = [10, 106, 214]; // mirrors METHOD_CUES[i].from
+// Timing is data: the cards are DERIVED from the narration cues rather than
+// retyped next to them. A hand-copied table desyncs the moment a cue moves,
+// and nothing fails loudly when it does.
+const CARD_AT = METHOD_CUES.map((cue) => cue.from);
 
 const MoveCard: React.FC<{
   index: string;

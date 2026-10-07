@@ -76,8 +76,8 @@ every scaled element gets its OWN composition-sized `overflow: hidden` viewport
 
 ### Publishing detail that saved a deploy
 
-The film was scheduled on YouTube, and a scheduled video is private until publish time -
-its embed says "Video unavailable" and its thumbnail 404s. The website probed YouTube's
+A later film in the series was scheduled on YouTube, and a scheduled video is private
+until publish time: its embed says "Video unavailable" and its thumbnail 404s. The website probed YouTube's
 oEmbed endpoint server-side (200 = watchable, 403 = still private) and kept showing the
 previous film until the new one went live. No deploy timing, no dead player.
 

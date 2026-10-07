@@ -1,0 +1,31 @@
+{
+  "$comment": [
+    "Copy this to .mcp.json and fill in your own token, or add the server with",
+    "`claude mcp add`. Keep tokens in your environment (a gitignored .env,",
+    "your shell profile, or a secret manager), never literally in this file.",
+    "",
+    "NEITHER provider is required to render the two example films. Both of",
+    "them are pure code and cost nothing: render one before you connect",
+    "anything.",
+    "",
+    "MUSIC AND SFX - epidemic-sound. The endpoint below is the real one; the",
+    "token is yours. Setting an explicit Authorization header disables the",
+    "OAuth fallback, so an expired token fails with a bare 401 and no prompt",
+    "to re-auth: refresh the token rather than debugging the URL.",
+    "",
+    "AI FOOTAGE - Higgsfield. It is installed as a connector from",
+    "higgsfield.ai rather than as a URL you type here, so follow their setup",
+    "docs; this file deliberately does not guess an endpoint for it. Any",
+    "provider with image references plus an image-to-video start-image",
+    "contract can run the pipeline instead: the ai-cinematic-broll skill is",
+    "written to be provider-agnostic, and an entry for one would take the same",
+    "shape as the block below."
+  ],
+  "mcpServers": {
+    "epidemic-sound": {
+      "type": "http",
+      "url": "https://www.epidemicsound.com/a/mcp-service/mcp",
+      "headers": { "Authorization": "Bearer ${EPIDEMIC_SOUND_TOKEN}" }
+    }
+  }
+}

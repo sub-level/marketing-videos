@@ -1,4 +1,4 @@
-// The narration as data — frame-timed cues, SCENE-RELATIVE (each scene's
+// The narration as data: frame-timed cues, SCENE-RELATIVE (each scene's
 // local frame 0). This file is the single source of truth the scenes,
 // captions, and sound cues all read. House style: no em-dashes; every line
 // fits three caption rows in portrait.
@@ -12,7 +12,7 @@ export const HOOK = {
   line2: "It was compiled.",
 } as const;
 
-// METHOD — narration under the three move cards.
+// METHOD: narration under the three move cards.
 export const METHOD_CUES: Cue[] = [
   {
     from: 10,
@@ -43,7 +43,7 @@ export const MOVES: Move[] = [
   { index: "03", title: "Assembled in code", sub: "every frame reproducible" },
 ];
 
-// NUMBERS — the stats. Single source of truth so the counters and the
+// NUMBERS: the stats. Single source of truth so the counters and the
 // caption never disagree.
 export const STATS = [
   { value: 810, suffix: "", label: "frames, all from code" },

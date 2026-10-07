@@ -137,7 +137,7 @@ export const KineticCaption: React.FC<{ cues: Cue[] }> = ({ cues }) => {
         zIndex: 60,
       }}
     >
-      {/* Localized legibility scrim — soft, only under live captions. */}
+      {/* Localized legibility scrim: soft, only under live captions. */}
       <div
         style={{
           position: "absolute",

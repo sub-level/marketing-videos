@@ -25,8 +25,14 @@ export const Backdrop: React.FC = () => {
   );
 
   // Slow drift so stills never feel frozen.
-  const driftX = interpolate(frame, [0, TOTAL_FRAMES], [-60, 60]);
-  const driftY = interpolate(frame, [0, TOTAL_FRAMES], [30, -30]);
+  const driftX = interpolate(frame, [0, TOTAL_FRAMES], [-60, 60], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
+  const driftY = interpolate(frame, [0, TOTAL_FRAMES], [30, -30], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
 
   return (
     <AbsoluteFill style={{ background: COLORS.bg, overflow: "hidden" }}>

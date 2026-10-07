@@ -1,7 +1,7 @@
 # The process: brief to published film
 
 This is the end-to-end playbook we follow to make marketing videos with a coding agent.
-The three skills in `.claude/skills/` are the deep dives; this is the order of operations
+The five skills in `.claude/skills/` are the deep dives; this is the order of operations
 and the decision points between them.
 
 ## 0. The stack
@@ -11,7 +11,12 @@ and the decision points between them.
 - **Claude Code** - the agent that writes scenes, times cues, generates footage through
   MCP tools, and runs the render + verification loop.
 - **Higgsfield MCP** (or any image + image-to-video provider) - character-consistent
-  stills and identity-preserving motion.
+  stills, identity-preserving motion, direct-to-camera presenters.
+- **Epidemic Sound** - the licensed music bed and most of the one-shots. It ships an MCP
+  server, so the agent can search and audition tracks itself (config in the
+  `video-audio-stack` skill).
+- **three.js + @remotion/three** - when the hero is the product on real hardware: a 3D
+  device with the actual product recording playing on its screen.
 - **remotion-bits** - a searchable library of working animation examples, with its own
   agent skill. Check it before hand-rolling a common effect.
 - **ffmpeg** - the truth-teller: audio profiling, frame extraction, clip surgery.
@@ -34,6 +39,24 @@ Do not open the editor. Write:
 Truthfulness rule: details in-shot must be true or invented. A real date, a real venue, a
 real match number are great; a third party's trademark or domain is not - invent a
 truthful stand-in instead.
+
+## 1b. If the brief is a reference film, MEASURE it
+
+"Make it like this video" is the most common brief and the easiest to get wrong, because
+the natural move is to watch it a few times and build your impression of it. The
+impression is always wrong in the ways that matter: the type is bigger than you remember,
+the holds are shorter, and the thing that made it feel expensive was one continuous move
+you never consciously saw.
+
+Extract every frame (`ffmpeg -i ref.mp4 frames/%04d.png`) and measure the four things
+that carry a film: type size as a ratio of frame height, the per-letter arrival frames of
+a type-on, the exact mechanics of a type-off, and the hold lengths. Write the grammar
+down in prose WITH NUMBERS before writing any code, then cast your own story into it beat
+for beat.
+
+You are borrowing grammar, which is shared, not content, which is not. Your words, your
+footage, your brand, your track. The full method, including the measurement scripts, is
+in the `motion-from-reference` skill.
 
 ## 2. Look bible + design tokens
 
@@ -58,6 +81,11 @@ Walk the story beats and assign each to a medium:
 - **Hybrid**: footage as a blurred/graded backdrop with frosted UI on top; stills with
   code-side drift standing in for clips; real app components running inside the render
   behind a runtime shim.
+- **A real 3D device**: when the product IS the hero, put the actual model on screen with
+  the real recordings playing on its glass and let the camera narrate (slow push-ins, no
+  captions over the device). It costs render time, not credits, and it is the most
+  convincing product footage available once the AI budget is spent. See the
+  `device-3d-stage` skill, and expect a day of lifecycle gotchas the first time.
 
 Real product recordings and screenshots beat both when they exist - use them, and use AI
 footage for the world around them.
@@ -90,7 +118,10 @@ Per the `remotion-marketing-video` skill:
 - Kinetic captions render the script; springs for entrances; every `interpolate` clamped
   both sides.
 - Write scenes aspect-aware from day one: the 9:16 edition is the same tree under
-  `VerticalLayoutContext`, not a re-edit.
+  `VerticalLayoutContext`, not a re-edit. The same goes for a light or mixed edition
+  under `ThemeContext`.
+- Geometry transforms, it does not restart. A sequence that mounts fresh shapes per card
+  reads as slides no matter how good the easing is.
 
 ## 6. Score it
 
@@ -98,6 +129,11 @@ Per the `video-audio-stack` skill: one music bed with a frame-keyed volume curve
 ducks under key moments; whoosh/whip impacts on physical transitions; tactile UI sounds on
 individual events. **Profile the track with ffmpeg before cutting to it** - audible length
 is not file length, and the climax landing on dead air is the classic failure.
+
+Decide what is SILENT at the same time. A click per typed letter, a sound on a visible
+tap, and a ding on every reveal are the three reflexes that make a film feel like a
+tutorial. One real recorded sound with the music ducked under it beats ten library
+whooshes.
 
 ## 7. Review loops
 
@@ -115,9 +151,16 @@ is not file length, and the climax landing on dead air is the classic failure.
 ## 8. Render + publish
 
 - 16:9 master for YouTube / website / deck; 9:16 native edition for TikTok, Reels,
-  Stories; optional square. All from the same scene code.
+  Stories; optional square; optional light and mixed editions. All from the same scene
+  code, which is why the deliverable count is a matrix and not a schedule.
+- **Deliveries are supersampled.** Render at `--scale=2` and downscale with Lanczos
+  (`scripts/render-supersampled.sh`). At 1x the browser stair-steps rotated elements, CSS
+  clips, thin strokes and WebGL edges, and the film reads as cheap to people who cannot
+  say why.
 - High-quality master: `--scale=2 --crf=14 --image-format=png --color-space=bt709
-  --x264-preset=veryslow --pixel-format=yuv420p`.
+  --x264-preset=veryslow --pixel-format=yuv420p`. Add `--gl=angle` for any WebGL scene.
+- An audio-only revision after picture lock does not need a re-render: render the
+  composition to WAV and remux onto the approved master with `-c:v copy`.
 - Thumbnails and posters: crop frames from your own film with ffmpeg.
 - Confirm the music license covers publication before upload.
 
